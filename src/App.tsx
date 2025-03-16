@@ -1,34 +1,29 @@
-import * as React from 'react';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import { ReactRouterAppProvider } from '@toolpad/core/react-router';
-import { Navigator, Outlet } from 'react-router-dom';
-import type { Navigation } from '@toolpad/core';
-const NAVIGATION : Navigation= [
-  {
-    kind: 'header',
-    title: 'Main items',
-  },
-  {
-    title: 'Dashboard',
-    segment: 'home',
-    icon: <DashboardIcon />,
-  },
-  {
-    segment: 'home/orders',
-    title: 'Orders',
-    icon: <ShoppingCartIcon />,
-  },
-];
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Layout from './components/Layout';
+import Dashboard from './components/Dashboard';
+import Analytics from './components/Analytics';
+import Users from './components/Users';
+import Settings from './components/Settings';
+import { ThemeProvider } from './context/ThemeContext';
 
-const BRANDING = {
-  title: 'My Toolpad Core App',
-};
-
-export default function App() {
+function App() {
   return (
-    <ReactRouterAppProvider navigation={NAVIGATION} branding={BRANDING}>
-      <Outlet />
-    </ReactRouterAppProvider>
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="analytics" element={<Analytics />} />
+            <Route path="users" element={<Users />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="help" element={<div style={{ padding: '24px' }}>Help Page Content</div>} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
+
+export default App;
