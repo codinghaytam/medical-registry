@@ -65,7 +65,7 @@ const Users: React.FC = () => {
       name: 'Emma Wilson', 
       email: 'emma.wilson@example.com', 
       phone: '+1 (555) 123-4567', 
-      role: 'Admin', 
+      roles: ['Admin', 'Editor'], 
       status: 'Active',
       avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80',
     },
@@ -74,7 +74,7 @@ const Users: React.FC = () => {
       name: 'Michael Brown', 
       email: 'michael.brown@example.com', 
       phone: '+1 (555) 234-5678', 
-      role: 'User', 
+      roles: ['User'], 
       status: 'Active',
       avatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80',
     },
@@ -83,7 +83,7 @@ const Users: React.FC = () => {
       name: 'Sophia Chen', 
       email: 'sophia.chen@example.com', 
       phone: '+1 (555) 345-6789', 
-      role: 'Editor', 
+      roles: ['Editor'], 
       status: 'Active',
       avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80',
     },
@@ -92,7 +92,7 @@ const Users: React.FC = () => {
       name: 'James Rodriguez', 
       email: 'james.rodriguez@example.com', 
       phone: '+1 (555) 456-7890', 
-      role: 'User', 
+      roles: ['User'], 
       status: 'Inactive',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80',
     },
@@ -101,7 +101,7 @@ const Users: React.FC = () => {
       name: 'Olivia Taylor', 
       email: 'olivia.taylor@example.com', 
       phone: '+1 (555) 567-8901', 
-      role: 'Admin', 
+      roles: ['Admin'], 
       status: 'Active',
       avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80',
     },
@@ -110,7 +110,7 @@ const Users: React.FC = () => {
       name: 'William Johnson', 
       email: 'william.johnson@example.com', 
       phone: '+1 (555) 678-9012', 
-      role: 'User', 
+      roles: ['User'], 
       status: 'Active',
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80',
     },
@@ -119,7 +119,7 @@ const Users: React.FC = () => {
       name: 'Ava Martinez', 
       email: 'ava.martinez@example.com', 
       phone: '+1 (555) 789-0123', 
-      role: 'Editor', 
+      roles: ['Editor'], 
       status: 'Inactive',
       avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80',
     },
@@ -207,24 +207,29 @@ const Users: React.FC = () => {
                       </Box>
                     </TableCell>
                     <TableCell>
-                      <Chip 
-                        label={user.role} 
-                        size="small"
-                        sx={{ 
-                          backgroundColor: 
-                            user.role === 'Admin' 
-                              ? theme.palette.primary.light + '20' 
-                              : user.role === 'Editor'
-                                ? theme.palette.info.light + '20'
-                                : theme.palette.grey[200],
-                          color: 
-                            user.role === 'Admin' 
-                              ? theme.palette.primary.main 
-                              : user.role === 'Editor'
-                                ? theme.palette.info.main
-                                : theme.palette.text.primary,
-                        }}
-                      />
+                      <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                        {user.roles.map((role) => (
+                          <Chip 
+                            key={role}
+                            label={role} 
+                            size="small"
+                            sx={{ 
+                              backgroundColor: 
+                                role === 'Admin' 
+                                  ? theme.palette.primary.light + '20' 
+                                  : role === 'Editor'
+                                    ? theme.palette.info.light + '20'
+                                    : theme.palette.grey[200],
+                              color: 
+                                role === 'Admin' 
+                                  ? theme.palette.primary.main 
+                                  : role === 'Editor'
+                                    ? theme.palette.info.main
+                                    : theme.palette.text.primary,
+                            }}
+                          />
+                        ))}
+                      </Box>
                     </TableCell>
                     <TableCell>
                       <Chip 

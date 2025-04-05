@@ -44,6 +44,11 @@ const Sidebar: React.FC<SidebarProps> = ({ open, handleDrawerToggle }) => {
     { text: 'Users', icon: <Users size={22} />, path: '/users' },
     { text: 'Settings', icon: <Settings size={22} />, path: '/settings' },
     { text: 'Help', icon: <HelpCircle size={22} />, path: '/help' },
+    { text: 'Patients', icon: <HelpCircle size={22} />, path: '/patients' },
+    { text: 'Consultations', icon: <HelpCircle size={22} />, path: '/consultation' },
+    { text: 'Traitements', icon: <HelpCircle size={22} />, path: '/traitement' },
+    
+
   ];
 
   const drawer = (

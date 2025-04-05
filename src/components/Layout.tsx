@@ -27,6 +27,7 @@ const Layout: React.FC = () => {
           ml: { md: '50px' },
           mt: '64px',
           bgcolor: 'background.default',
+          maxWidth:'calc(100vw-240px)'
         }}
       >
         <Outlet />
