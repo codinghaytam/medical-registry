@@ -1,0 +1,103 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+enum Role {
+  ETUDIANT
+  MEDECIN
+  ADMIN
+}
+
+enum Status {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum Profession {
+  PARODENTAIRE
+  ORTHODENTAIRE
+}
+
+
+model Medecin {
+  id            String    @id @default(uuid())
+  profession    Profession
+  isSpecialiste Boolean        @default(false)
+  userId        String         @unique
+  actions       Action[]
+  consultations Consultation[]
+}
+
+model Etudiant {
+  id      String     @id @default(uuid())
+  niveau   Int
+  userId  String     @unique
+}
+
+model Patient {
+  id              String         @id @default(uuid())
+  nom             String
+  numeroDeDossier String         @unique
+  prenom          String
+  adresse         String
+  tel             Int
+  consultations   Consultation[]
+  Seances         Seance[]
+  actions         Action[]
+}
+
+model Consultation {
+  id             String         @id @default(uuid())
+  date           DateTime
+  idConsultation String         @unique
+  patient        Patient        @relation(fields: [patientId], references: [id])
+  patientId      String
+  diagnostiques  Diagnostique[]
+  medecin        Medecin        @relation(fields: [medecinId], references: [id])
+  medecinId      String
+}
+
+model Diagnostique {
+  id             String       @id @default(uuid())
+  type           String
+  text           String
+  consultation   Consultation @relation(fields: [consultationId], references: [id])
+  consultationId String
+}
+
+model Seance {
+  id        String   @id @default(uuid())
+  idSeance  String   @unique
+  type      String
+  date      DateTime
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  patientId String
+}
+
+model Action {
+  id          String    @id @default(uuid())
+  type        String
+  description String
+  date        DateTime
+  medecin     Medecin   @relation(fields: [medecinId], references: [id])
+  medecinId   String
+  patient     Patient   @relation(fields: [patientId], references: [id])
+  patientId   String
+}
+
+model Task {
+  id     String    @id @default(uuid())
+  title  String
+  status Status @default(PENDING)
+}
