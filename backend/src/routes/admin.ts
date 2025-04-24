@@ -1,40 +1,17 @@
 import express, { Request, Response } from 'express';
 import KcAdminClient from '@keycloak/keycloak-admin-client';
+import * as dotenv from "dotenv";
+import { connectToKeycloak } from '../utils/keycloak.js';
+
+dotenv.config();
 
 const router = express.Router();
-
-import * as dotenv from "dotenv"
-
-
-dotenv.config({path:"../../.env"})
-
-// Initialize Keycloak admin client
-const initKeycloak = async () => {
-  const kcAdminClient = new KcAdminClient();
-  kcAdminClient.setConfig({
-    realmName: 'myRealm',
-    baseUrl: 'http://localhost:9090',
-  });
-
-  await kcAdminClient.auth({
-    username: process.env.ADMIN_USERNAME || '',
-    password: process.env.ADMIN_PASSWORD || '',
-    grantType: 'password',
-    clientId: process.env.KEYCLOAK_CLIENT || '',
-    clientSecret: process.env.KEYCLOAK_CLIENT_SECRET || ''
-  });
-
-  return kcAdminClient;
-};
-
 let kcAdminClient: KcAdminClient;
-(async () => {
-  kcAdminClient = await initKeycloak();
-})();
 
 // Helper function to get Keycloak user info
 async function getKeycloakUserInfo(userId: string) {
   try {
+    kcAdminClient = await connectToKeycloak();
     const user = await kcAdminClient.users.findOne({ id: userId });
     return user;
   } catch (error) {
@@ -53,6 +30,7 @@ interface AdminRequestBody {
 // Helper function to assign admin role to user
 async function assignAdminRole(userId: string) {
   try {
+    kcAdminClient = await connectToKeycloak();
     // Get admin role
     const roles = await kcAdminClient.roles.find();
     const adminRole = roles.find(role => role.name === 'admin');
@@ -80,6 +58,7 @@ async function assignAdminRole(userId: string) {
 /* GET admins listing. */
 router.get('/', async function(_req: Request, res: Response) {
   try {
+    kcAdminClient = await connectToKeycloak();
     const users = await kcAdminClient.users.find();
     // Filter users with admin role
     const admins = await Promise.all(
@@ -105,6 +84,7 @@ router.get('/:id', async function(req: Request, res: Response):Promise<any> {
       return res.status(404).send({ error: "Admin not found" });
     }
     
+    kcAdminClient = await connectToKeycloak();
     // Check if user has admin role
     const roles = await kcAdminClient.users.listRealmRoleMappings({ id: req.params.id });
     if (!roles.some(role => role.name === 'admin')) {
@@ -120,6 +100,7 @@ router.get('/:id', async function(req: Request, res: Response):Promise<any> {
 
 router.post('/', async function(req: Request<{}, {}, AdminRequestBody>, res: Response) {
   try {
+    kcAdminClient = await connectToKeycloak();
     // Create user in Keycloak
     const keycloakUser = await kcAdminClient.users.create({
       username: req.body.username,
@@ -146,6 +127,7 @@ router.put('/:id', async function(req: Request<{id: string}, {}, Partial<AdminRe
       return res.status(404).send({ error: "Admin not found" });
     }
 
+    kcAdminClient = await connectToKeycloak();
     // Check if user has admin role
     const roles = await kcAdminClient.users.listRealmRoleMappings({ id: req.params.id });
     if (!roles.some(role => role.name === 'admin')) {
@@ -178,6 +160,7 @@ router.delete('/:id', async function(req: Request, res: Response):Promise<any> {
       return res.status(404).send({ error: "Admin not found" });
     }
 
+    kcAdminClient = await connectToKeycloak();
     // Check if user has admin role
     const roles = await kcAdminClient.users.listRealmRoleMappings({ id: req.params.id });
     if (!roles.some(role => role.name === 'admin')) {

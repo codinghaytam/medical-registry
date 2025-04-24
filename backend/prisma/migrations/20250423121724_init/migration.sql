@@ -7,6 +7,15 @@ CREATE TYPE "Status" AS ENUM ('PENDING', 'IN_PROGRESS', 'COMPLETED');
 -- CreateEnum
 CREATE TYPE "Profession" AS ENUM ('PARODENTAIRE', 'ORTHODENTAIRE');
 
+-- CreateEnum
+CREATE TYPE "MotifConsultation" AS ENUM ('ESTHETIQUE', 'FONCTIONNELLE', 'ADRESSE_PAR_CONFRERE');
+
+-- CreateEnum
+CREATE TYPE "HygieneBuccoDentaire" AS ENUM ('BONNE', 'MOYENNE', 'MAUVAISE');
+
+-- CreateEnum
+CREATE TYPE "TypeMastication" AS ENUM ('UNILATERALE_ALTERNEE', 'UNILATERALE_STRICTE', 'BILATERALE');
+
 -- CreateTable
 CREATE TABLE "Medecin" (
     "id" TEXT NOT NULL,
@@ -34,6 +43,13 @@ CREATE TABLE "Patient" (
     "prenom" TEXT NOT NULL,
     "adresse" TEXT NOT NULL,
     "tel" INTEGER NOT NULL,
+    "motifConsultation" "MotifConsultation" NOT NULL,
+    "anameseGenerale" TEXT,
+    "anamneseFamiliale" TEXT,
+    "anamneseLocale" TEXT,
+    "hygieneBuccoDentaire" "HygieneBuccoDentaire" NOT NULL,
+    "typeMastication" "TypeMastication" NOT NULL,
+    "antecedentsDentaires" TEXT,
 
     CONSTRAINT "Patient_pkey" PRIMARY KEY ("id")
 );

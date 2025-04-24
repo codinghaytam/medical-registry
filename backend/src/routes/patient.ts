@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { PrismaClient, Patient } from '@prisma/client';
+import { PrismaClient, Patient, MotifConsultation, HygieneBuccoDentaire, TypeMastication } from '@prisma/client';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -9,7 +9,14 @@ interface PatientRequestBody {
   numeroDeDossier: string;
   prenom: string;
   adresse: string;
-  tel: number;
+  tel: string;
+  motifConsultation: MotifConsultation;
+  anameseGenerale?: string;
+  anamneseFamiliale?: string;
+  anamneseLocale?: string;
+  hygieneBuccoDentaire: HygieneBuccoDentaire;
+  typeMastication: TypeMastication;
+  antecedentsDentaires?: string;
 }
 
 // GET all patients
@@ -48,7 +55,12 @@ router.get('/:id', async function(req: Request, res: Response, _next: NextFuncti
 router.post('/', async function(req: Request<{}, {}, PatientRequestBody>, res: Response, _next: NextFunction) {
   try {
     const newPatient: Patient = await prisma.patient.create({
-      data: req.body
+      data: {
+        ...req.body,
+        motifConsultation: req.body.motifConsultation,
+        hygieneBuccoDentaire: req.body.hygieneBuccoDentaire,
+        typeMastication: req.body.typeMastication
+      }
     });
     res.status(201).send(newPatient);
   } catch (e) {
@@ -64,7 +76,12 @@ router.put('/:id', async function(req: Request<{id: string}, {}, Partial<Patient
   try {
     const updatedPatient: Patient = await prisma.patient.update({
       where: { id: req.params.id },
-      data: req.body
+      data: {
+        ...req.body,
+        motifConsultation: req.body.motifConsultation as MotifConsultation,
+        hygieneBuccoDentaire: req.body.hygieneBuccoDentaire as HygieneBuccoDentaire,
+        typeMastication: req.body.typeMastication as TypeMastication
+      }
     });
     res.status(200).send(updatedPatient);
   } catch (e) {

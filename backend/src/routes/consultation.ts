@@ -1,12 +1,14 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { PrismaClient, Consultation } from '@prisma/client';
+import { PrismaClient, Consultation, MotifConsultation, HygieneBuccoDentaire, TypeMastication } from '@prisma/client';
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
 interface ConsultationRequestBody {
-  // Add appropriate fields based on your Prisma schema
-  [key: string]: any;
+  date: Date;
+  idConsultation: string;
+  patientId: string;
+  medecinId: string;
 }
 
 // GET all consultations
@@ -46,11 +48,14 @@ router.post('/', async function(req: Request<{}, {}, ConsultationRequestBody>, r
   try {
     const newConsultation: Consultation = await prisma.consultation.create({
       data: {
-        date: req.body.date,
+        date: new Date(req.body.date),
         idConsultation: req.body.idConsultation,
-        patient: req.body.patient,
-        medecin: req.body.medecin,
-        // Add other required fields here
+        patient: {
+          connect: { id: req.body.patientId }
+        },
+        medecin: {
+          connect: { id: req.body.medecinId }
+        }
       }
     });
     res.status(201).send(newConsultation);
@@ -67,7 +72,16 @@ router.put('/:id', async function(req: Request<{id: string}, {}, Partial<Consult
   try {
     const updatedConsultation: Consultation = await prisma.consultation.update({
       where: { id: req.params.id },
-      data: req.body
+      data: {
+        date: req.body.date ? new Date(req.body.date) : undefined,
+        idConsultation: req.body.idConsultation,
+        patient: req.body.patientId ? {
+          connect: { id: req.body.patientId }
+        } : undefined,
+        medecin: req.body.medecinId ? {
+          connect: { id: req.body.medecinId }
+        } : undefined
+      }
     });
     res.status(200).send(updatedConsultation);
   } catch (e) {

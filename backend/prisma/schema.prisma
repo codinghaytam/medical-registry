@@ -29,6 +29,23 @@ enum Profession {
   ORTHODENTAIRE
 }
 
+enum MotifConsultation {
+  ESTHETIQUE
+  FONCTIONNELLE
+  ADRESSE_PAR_CONFRERE
+}
+
+enum HygieneBuccoDentaire {
+  BONNE
+  MOYENNE
+  MAUVAISE
+}
+
+enum TypeMastication {
+  UNILATERALE_ALTERNEE
+  UNILATERALE_STRICTE
+  BILATERALE
+}
 
 model Medecin {
   id            String    @id @default(uuid())
@@ -51,21 +68,28 @@ model Patient {
   numeroDeDossier String         @unique
   prenom          String
   adresse         String
-  tel             Int
+  tel             String
+  motifConsultation    MotifConsultation
+  anameseGenerale      String?
+  anamneseFamiliale    String?
+  anamneseLocale       String?
+  hygieneBuccoDentaire HygieneBuccoDentaire
+  typeMastication      TypeMastication
+  antecedentsDentaires String?
   consultations   Consultation[]
   Seances         Seance[]
   actions         Action[]
 }
 
 model Consultation {
-  id             String         @id @default(uuid())
-  date           DateTime
-  idConsultation String         @unique
-  patient        Patient        @relation(fields: [patientId], references: [id])
-  patientId      String
-  diagnostiques  Diagnostique[]
-  medecin        Medecin        @relation(fields: [medecinId], references: [id])
-  medecinId      String
+  id                    String               @id @default(uuid())
+  date                  DateTime
+  idConsultation       String               @unique
+  patient              Patient              @relation(fields: [patientId], references: [id])
+  patientId            String
+  diagnostiques        Diagnostique[]
+  medecin              Medecin              @relation(fields: [medecinId], references: [id])
+  medecinId            String
 }
 
 model Diagnostique {

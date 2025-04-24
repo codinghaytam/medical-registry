@@ -3,10 +3,14 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { PrismaClient, Etudiant } from '@prisma/client';
 import KcAdminClient from '@keycloak/keycloak-admin-client';
-import * as dotenv from "dotenv"
-import path from 'path';
+import * as dotenv from "dotenv";
+import { connectToKeycloak } from '../utils/keycloak.js';
 
-dotenv.config({path:"./../../.env"})
+dotenv.config();
+
+let kcAdminClient: KcAdminClient;
+const router = express.Router();
+const prisma = new PrismaClient();
 
 interface EtudiantRequestBody {
   username: string;
@@ -15,26 +19,10 @@ interface EtudiantRequestBody {
   specialite: string;
 }
 
-const kcAdminClient = new KcAdminClient();
-kcAdminClient.setConfig({
-  realmName: 'myRealm',
-  baseUrl: 'http://localhost:9090',
-});
-(async()=>{
-  await kcAdminClient.auth({
-    username: process.env.ADMIN_USERNAME,
-    password: process.env.ADMIN_PASSWORD,
-    grantType: 'password',
-    clientId: process.env.KEYCLOAK_CLIENT as string,
-    clientSecret: process.env.KEYCLOAK_CLIENT_SECRET
-  });
-});
-
-const router = express.Router();
-const prisma = new PrismaClient();
-
+// Helper function to get Keycloak user info
 async function getKeycloakUserInfo(userId: string) {
   try {
+    kcAdminClient = await connectToKeycloak();
     const user = await kcAdminClient.users.findOne({ id: userId });
     return user;
   } catch (error) {
